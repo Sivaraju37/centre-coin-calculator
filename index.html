@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Centre Coin - Pool Calculator</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div class="app">
+
+    <header class="header">
+        <div>
+            <h1>Centre Coin</h1>
+            <p>Pool & Player Calculator</p>
+        </div>
+
+        <div class="round-box">
+            <span>Round</span>
+            <strong id="roundNumber">1</strong>
+        </div>
+    </header>
+
+
+    <!-- POOL -->
+    <section class="pool-card">
+        <p>Current Pool</p>
+        <h2>₹<span id="poolAmount">0</span></h2>
+        <span id="poolStatus" class="status active">ACTIVE</span>
+    </section>
+
+
+    <!-- INITIAL SETUP -->
+    <section class="card" id="setupSection">
+
+        <div class="section-title">
+            <div>
+                <h2>Start Round</h2>
+                <p>Initial contribution from each player</p>
+            </div>
+        </div>
+
+        <div class="setup-row">
+            <div class="input-group">
+                <label>Number of Players</label>
+                <input
+                    type="number"
+                    id="playerCount"
+                    min="2"
+                    max="20"
+                    value="4"
+                    oninput="createPlayerNameInputs()"
+                >
+            </div>
+
+            <div class="input-group">
+                <label>Initial Amount / Player</label>
+                <input
+                    type="number"
+                    id="initialAmount"
+                    min="1"
+                    value="10"
+                >
+            </div>
+        </div>
+
+        <!-- Dynamic Player Name Inputs Container -->
+        <div id="playerNamesContainer"></div>
+
+        <button class="primary-btn" onclick="startGame()">
+            Start Game
+        </button>
+
+    </section>
+
+
+    <!-- START NEW ROUND SECTION (Controlled by JS) -->
+    <section class="card" id="newRoundSection" style="display:none;">
+        <div class="section-title">
+            <div>
+                <h2>Round Completed</h2>
+                <p>The pool is currently ₹0. Start the next round when ready.</p>
+            </div>
+        </div>
+        <button class="primary-btn" onclick="startNewRound()">
+            Start New Round
+        </button>
+    </section>
+
+
+    <!-- PLAYERS -->
+    <section class="card">
+
+        <div class="section-title">
+            <div>
+                <h2>Players</h2>
+                <p>Current player balances</p>
+            </div>
+        </div>
+
+        <div id="playersContainer" class="players-container">
+            <div class="empty">
+                Start a round to add players.
+            </div>
+        </div>
+
+    </section>
+
+
+    <!-- BET -->
+    <section class="card">
+
+        <div class="section-title">
+            <div>
+                <h2>Enter Result</h2>
+                <p>Enter the result after the coin is completed</p>
+            </div>
+        </div>
+
+        <div class="bet-form">
+
+            <div class="input-group">
+                <label>Player</label>
+                <select id="betPlayer">
+                    <option value="">Select Player</option>
+                </select>
+            </div>
+
+            <div class="input-group">
+                <label>Bet Amount</label>
+                <input
+                    type="number"
+                    id="betAmount"
+                    min="1"
+                    placeholder="Enter amount"
+                >
+            </div>
+
+            <div class="result-buttons">
+
+                <button
+                    class="win-btn"
+                    onclick="submitResult('WIN')"
+                >
+                    WIN
+                </button>
+
+                <button
+                    class="loss-btn"
+                    onclick="submitResult('LOSS')"
+                >
+                    LOSS
+                </button>
+
+            </div>
+
+        </div>
+
+        <div id="message" class="message"></div>
+
+    </section>
+
+
+    <!-- LAST TRANSACTION -->
+    <section class="card" id="lastTransactionSection" style="display:none;">
+
+        <div class="section-title">
+            <div>
+                <h2>Last Transaction</h2>
+            </div>
+        </div>
+
+        <div id="lastTransaction"></div>
+
+    </section>
+
+
+    <!-- HISTORY -->
+    <section class="card">
+
+        <div class="section-title">
+            <div>
+                <h2>Transaction History</h2>
+                <p>Current round activity</p>
+            </div>
+
+            <button class="small-btn" onclick="clearHistory()">
+                Clear
+            </button>
+        </div>
+
+        <div id="historyContainer">
+            <div class="empty">
+                No transactions yet.
+            </div>
+        </div>
+
+    </section>
+
+
+    <!-- FINAL SETTLEMENT -->
+    <section class="card">
+
+        <div class="section-title">
+            <div>
+                <h2>Settlement</h2>
+                <p>Current player balances</p>
+            </div>
+        </div>
+
+        <div id="settlementContainer">
+            <div class="empty">
+                No settlement available.
+            </div>
+        </div>
+
+    </section>
+
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>

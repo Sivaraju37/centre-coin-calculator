@@ -1,0 +1,472 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: #eef2f7;
+    color: #172033;
+    min-height: 100vh;
+}
+
+.app {
+    width: 100%;
+    max-width: 850px;
+    margin: auto;
+    padding: 20px;
+}
+
+
+/* HEADER */
+
+.header {
+    background: #102a56;
+    color: white;
+    border-radius: 18px;
+    padding: 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+    box-shadow: 0 8px 25px rgba(16, 42, 86, 0.18);
+}
+
+.header h1 {
+    font-size: 28px;
+    margin-bottom: 5px;
+}
+
+.header p {
+    color: #c9d6eb;
+    font-size: 14px;
+}
+
+.round-box {
+    background: rgba(255,255,255,0.12);
+    padding: 10px 16px;
+    border-radius: 12px;
+    text-align: center;
+}
+
+.round-box span {
+    display: block;
+    font-size: 11px;
+    color: #c9d6eb;
+}
+
+.round-box strong {
+    font-size: 22px;
+}
+
+
+/* POOL */
+
+.pool-card {
+    background: white;
+    border-radius: 18px;
+    padding: 25px;
+    text-align: center;
+    margin-bottom: 18px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.07);
+    border-top: 5px solid #1d5fd1;
+}
+
+.pool-card p {
+    color: #68758a;
+    font-size: 14px;
+}
+
+.pool-card h2 {
+    font-size: 42px;
+    margin: 8px 0 12px;
+    color: #102a56;
+}
+
+.status {
+    display: inline-block;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.status.active {
+    background: #e4f8ec;
+    color: #148542;
+}
+
+.status.completed {
+    background: #fff0df;
+    color: #c76b00;
+}
+
+
+/* CARD */
+
+.card {
+    background: white;
+    border-radius: 18px;
+    padding: 22px;
+    margin-bottom: 18px;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.06);
+}
+
+.section-title {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+}
+
+.section-title h2 {
+    font-size: 19px;
+    color: #102a56;
+}
+
+.section-title p {
+    margin-top: 4px;
+    color: #788397;
+    font-size: 13px;
+}
+
+
+/* INPUTS */
+
+.setup-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+    margin-bottom: 18px;
+}
+
+.bet-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px;
+}
+
+.input-group label {
+    display: block;
+    font-size: 13px;
+    font-weight: bold;
+    margin-bottom: 7px;
+    color: #46536a;
+}
+
+.input-group input,
+.input-group select {
+    width: 100%;
+    height: 46px;
+    padding: 0 13px;
+    border: 1px solid #d5dce7;
+    border-radius: 10px;
+    outline: none;
+    font-size: 15px;
+    background: white;
+}
+
+.input-group input:focus,
+.input-group select:focus {
+    border-color: #1d5fd1;
+}
+
+
+/* BUTTONS */
+
+button {
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+    transition: 0.2s;
+}
+
+button:active {
+    transform: scale(0.97);
+}
+
+.primary-btn {
+    width: 100%;
+    height: 48px;
+    border-radius: 10px;
+    background: #1558c0;
+    color: white;
+    font-size: 15px;
+}
+
+.primary-btn:hover {
+    background: #10499f;
+}
+
+.result-buttons {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.win-btn,
+.loss-btn {
+    height: 48px;
+    border-radius: 10px;
+    color: white;
+    font-size: 15px;
+}
+
+.win-btn {
+    background: #159447;
+}
+
+.win-btn:hover {
+    background: #10793a;
+}
+
+.loss-btn {
+    background: #d83a3a;
+}
+
+.loss-btn:hover {
+    background: #b82f2f;
+}
+
+.small-btn {
+    background: #edf1f6;
+    color: #42516a;
+    padding: 8px 13px;
+    border-radius: 8px;
+}
+
+
+/* PLAYERS */
+
+.players-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+}
+
+.player-card {
+    border: 1px solid #e0e5ed;
+    border-radius: 13px;
+    padding: 16px;
+    background: #fafbfd;
+}
+
+.player-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.player-name {
+    font-weight: bold;
+    color: #263653;
+}
+
+.player-balance {
+    margin-top: 12px;
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.positive {
+    color: #159447;
+}
+
+.negative {
+    color: #d83a3a;
+}
+
+.zero {
+    color: #68758a;
+}
+
+
+/* MESSAGE */
+
+.message {
+    margin-top: 15px;
+    padding: 12px;
+    border-radius: 9px;
+    display: none;
+    font-size: 14px;
+}
+
+.message.success {
+    display: block;
+    background: #e6f8ed;
+    color: #13763b;
+}
+
+.message.error {
+    display: block;
+    background: #ffe8e8;
+    color: #b22d2d;
+}
+
+
+/* TRANSACTION */
+
+.transaction {
+    border: 1px solid #e1e6ee;
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 10px;
+}
+
+.transaction:last-child {
+    margin-bottom: 0;
+}
+
+.transaction-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.transaction-player {
+    font-weight: bold;
+}
+
+.transaction-result {
+    padding: 5px 9px;
+    border-radius: 7px;
+    font-size: 11px;
+    font-weight: bold;
+}
+
+.transaction-result.win {
+    background: #e4f8ec;
+    color: #148542;
+}
+
+.transaction-result.loss {
+    background: #ffe7e7;
+    color: #c52d2d;
+}
+
+.transaction-details {
+    margin-top: 10px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    font-size: 12px;
+    color: #68758a;
+}
+
+.transaction-details strong {
+    display: block;
+    color: #293750;
+    margin-top: 3px;
+}
+
+
+/* SETTLEMENT */
+
+.settlement-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 13px 0;
+    border-bottom: 1px solid #edf0f4;
+}
+
+.settlement-row:last-child {
+    border-bottom: none;
+}
+
+.settlement-name {
+    font-weight: bold;
+}
+
+.settlement-value {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+
+/* EMPTY */
+
+.empty {
+    padding: 25px;
+    text-align: center;
+    color: #8490a3;
+    background: #f7f9fc;
+    border-radius: 10px;
+    font-size: 14px;
+}
+
+
+/* NEW ROUND */
+
+.new-round-card {
+    background: #fff8e9;
+    border: 1px solid #f3d58f;
+    border-radius: 18px;
+    padding: 25px;
+    text-align: center;
+    margin-bottom: 18px;
+}
+
+.new-round-card h2 {
+    color: #9a6500;
+    margin-bottom: 8px;
+}
+
+.new-round-card p {
+    color: #76602f;
+    font-size: 14px;
+    margin-bottom: 18px;
+    line-height: 1.5;
+}
+
+
+/* FOOTER */
+
+footer {
+    text-align: center;
+    color: #8993a4;
+    padding: 10px 0 25px;
+    font-size: 12px;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 600px) {
+
+    .app {
+        padding: 12px;
+    }
+
+    .header {
+        padding: 18px;
+    }
+
+    .header h1 {
+        font-size: 23px;
+    }
+
+    .pool-card h2 {
+        font-size: 36px;
+    }
+
+    .setup-row,
+    .bet-form,
+    .players-container {
+        grid-template-columns: 1fr;
+    }
+
+    .result-buttons {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .transaction-details {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    .card {
+        padding: 17px;
+    }
+}
