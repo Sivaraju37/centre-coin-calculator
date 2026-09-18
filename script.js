@@ -37,6 +37,24 @@ function clearSavedGame() {
 
 
 // ==========================================
+// DARK MODE MEMORY
+// ==========================================
+
+function initDarkMode() {
+    const savedTheme = localStorage.getItem("centreCoinTheme");
+    if (savedTheme === "dark") {
+        document.body.classList.add("dark-mode");
+    }
+}
+
+function toggleDarkMode() {
+    document.body.classList.toggle("dark-mode");
+    const isDark = document.body.classList.contains("dark-mode");
+    localStorage.setItem("centreCoinTheme", isDark ? "dark" : "light");
+}
+
+
+// ==========================================
 // CREATE PLAYER NAME INPUTS
 // ==========================================
 
@@ -227,7 +245,11 @@ function startGame() {
 
             name: playerName,
 
-            balance: -initialAmount
+            balance: -initialAmount,
+
+            wins: 0,
+
+            losses: 0
 
         });
 
@@ -368,6 +390,8 @@ function updateUI() {
         ).className =
             "status completed";
 
+        triggerConfetti();
+
     }
 
     // ======================================
@@ -408,7 +432,7 @@ function updatePool() {
 
 
 // ==========================================
-// UPDATE PLAYERS
+// UPDATE PLAYERS (WITH WIN/LOSS COUNTERS)
 // ==========================================
 
 function updatePlayers() {
@@ -449,6 +473,10 @@ function updatePlayers() {
                 balanceClass = "negative";
             }
 
+            // Ensure counters default gracefully if loading older saved games
+            const wins = player.wins || 0;
+            const losses = player.losses || 0;
+
 
             return `
 
@@ -469,6 +497,11 @@ function updatePlayers() {
 
                     <div class="player-balance ${balanceClass}">
                         ₹${formatMoney(player.balance)}
+                    </div>
+
+                    <div class="player-stats" style="font-size: 0.85rem; margin-top: 6px; opacity: 0.85; display: flex; justify-content: space-between;">
+                        <span style="color: #27ae60;">Wins: <strong>${wins}</strong></span>
+                        <span style="color: #c0392b;">Losses: <strong>${losses}</strong></span>
                     </div>
 
                 </div>
@@ -650,6 +683,14 @@ function submitResult(result) {
     let balanceAfter;
 
 
+    // Initialize counters if undefined
+    if (player.wins === undefined) player.wins = 0;
+    if (player.losses === undefined) player.losses = 0;
+
+    const oldWins = player.wins;
+    const oldLosses = player.losses;
+
+
     // ======================================
     // WIN
     // ======================================
@@ -664,6 +705,8 @@ function submitResult(result) {
 
         balanceAfter =
             player.balance + betAmount;
+
+        player.wins++;
     }
 
 
@@ -681,6 +724,8 @@ function submitResult(result) {
 
         balanceAfter =
             player.balance - betAmount;
+
+        player.losses++;
     }
 
 
@@ -721,6 +766,10 @@ function submitResult(result) {
         balanceBefore: balanceBefore,
 
         balanceAfter: balanceAfter,
+
+        oldWins: oldWins,
+
+        oldLosses: oldLosses,
 
         time: new Date().toLocaleTimeString()
 
@@ -851,6 +900,10 @@ function undoLastTransaction() {
     // Revert pool and player balance back to poolBefore / balanceBefore
     game.pool = lastBet.poolBefore;
     player.balance = lastBet.balanceBefore;
+
+    // Restore previous win/loss tracking counts if tracked
+    if (lastBet.oldWins !== undefined) player.wins = lastBet.oldWins;
+    if (lastBet.oldLosses !== undefined) player.losses = lastBet.oldLosses;
 
     // Remove this transaction from history
     game.history.splice(lastBetIndex, 1);
@@ -1465,6 +1518,48 @@ function updateSettlement() {
 
 
 // ==========================================
+// SHARE / CLIPBOARD STANDINGS FORMATTING
+// ==========================================
+
+function copyStandingsToClipboard() {
+    if (!game.started || !game.players.length) {
+        showMessage("No active game to share.", "error");
+        return;
+    }
+
+    let text = `🎯 *CENTRE COIN - STANDINGS* (Round ${game.round})\n`;
+    text += `Current Pool: ₹${formatMoney(game.pool)}\n\n`;
+
+    game.players.forEach((p, index) => {
+        const sign = p.balance > 0 ? "+" : "";
+        text += `${index + 1}. ${p.name}: ${sign}₹${formatMoney(p.balance)} (W:${p.wins || 0} / L:${p.losses || 0})\n`;
+    });
+
+    navigator.clipboard.writeText(text).then(() => {
+        showMessage("Standings copied to clipboard!", "success");
+    }).catch(err => {
+        showMessage("Failed to copy standings.", "error");
+        console.error(err);
+    });
+}
+
+
+// ==========================================
+// CELEBRATORY CONFETTI TRIGGER
+// ==========================================
+
+function triggerConfetti() {
+    if (typeof confetti === "function") {
+        confetti({
+            particleCount: 120,
+            spread: 70,
+            origin: { y: 0.6 }
+        });
+    }
+}
+
+
+// ==========================================
 // CLEAR HISTORY
 // ==========================================
 
@@ -1564,11 +1659,11 @@ function escapeHTML(value) {
 document.addEventListener(
     "DOMContentLoaded",
     () => {
+        initDarkMode();
         loadGame();
         
         if (game.started) {
             updateUI();
-            // If there's a recent bet transaction in history, we can optionally restore the last transaction view if needed
             const lastBet = game.history.find(item => item.type === "BET");
             if (lastBet && lastBet.round === game.round) {
                 showLastTransaction(lastBet);

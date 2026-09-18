@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Centre Coin - Pool Calculator</title>
     <link rel="stylesheet" href="style.css">
+    <!-- Confetti Library CDN for animations -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
 </head>
 
 <body>
@@ -17,14 +19,19 @@
             <p>Pool & Player Calculator</p>
         </div>
 
-        <div style="display: flex; gap: 10px; align-items: center;">
+        <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
             <div class="round-box">
                 <span>Round</span>
                 <strong id="roundNumber">1</strong>
             </div>
             
-            <!-- Added Reset Game Button Here -->
-            <button onclick="resetGame()" style="background: #e74c3c; color: white; border: none; padding: 10px 14px; border-radius: 8px; cursor: pointer; font-weight: bold; height: fit-content;">
+            <!-- Dark Mode Toggle Button -->
+            <button onclick="toggleDarkMode()" class="small-btn" id="themeToggleBtn" title="Toggle Dark/Light Mode" style="cursor: pointer; padding: 8px 12px; border-radius: 8px; font-size: 16px;">
+                🌙
+            </button>
+
+            <!-- Reset Game Button -->
+            <button onclick="resetGame()" style="background: #e74c3c; color: white; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 13px; height: fit-content;">
                 Reset Game
             </button>
         </div>
@@ -87,7 +94,7 @@
     <section class="card" id="newRoundSection" style="display:none;">
         <div class="section-title">
             <div>
-                <h2>Round Completed</h2>
+                <h2>Round Completed 🎉</h2>
                 <p>The pool is currently ₹0. Start the next round when ready.</p>
             </div>
         </div>
@@ -103,7 +110,7 @@
         <div class="section-title">
             <div>
                 <h2>Players</h2>
-                <p>Current player balances</p>
+                <p>Current player balances and stats</p>
             </div>
         </div>
 
@@ -215,6 +222,11 @@
                 <h2>Settlement</h2>
                 <p>Current player balances</p>
             </div>
+
+            <!-- Share Settlement Button -->
+            <button class="small-btn" onclick="copyStandingsToClipboard()" style="background: #25D366; color: white; border: none; font-weight: bold; cursor: pointer;">
+                Share
+            </button>
         </div>
 
         <div id="settlementContainer">
