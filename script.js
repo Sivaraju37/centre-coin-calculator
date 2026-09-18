@@ -13,6 +13,30 @@ let game = {
 
 
 // ==========================================
+// LOCAL STORAGE FUNCTIONS
+// ==========================================
+
+function saveGame() {
+    localStorage.setItem("centreCoinGameData", JSON.stringify(game));
+}
+
+function loadGame() {
+    const savedData = localStorage.getItem("centreCoinGameData");
+    if (savedData) {
+        try {
+            game = JSON.parse(savedData);
+        } catch (e) {
+            console.error("Could not load saved game data", e);
+        }
+    }
+}
+
+function clearSavedGame() {
+    localStorage.removeItem("centreCoinGameData");
+}
+
+
+// ==========================================
 // CREATE PLAYER NAME INPUTS
 // ==========================================
 
@@ -203,8 +227,6 @@ function startGame() {
 
             name: playerName,
 
-            // Initial amount is deducted
-            // from every player
             balance: -initialAmount
 
         });
@@ -220,7 +242,6 @@ function startGame() {
 
     game.initialAmount = initialAmount;
 
-    // Initial contribution from every player
     game.pool =
         playerCount * initialAmount;
 
@@ -236,6 +257,12 @@ function startGame() {
     // ======================================
 
     addInitialContributionHistory();
+
+
+    // ======================================
+    // SAVE TO LOCAL STORAGE
+    // ======================================
+    saveGame();
 
 
     // ======================================
@@ -573,6 +600,19 @@ function submitResult(result) {
 
 
     // ======================================
+    // VALIDATE BET AMOUNT AGAINST POOL
+    // ======================================
+
+    if (betAmount > game.pool) {
+        showMessage(
+            `Bet amount (₹${formatMoney(betAmount)}) cannot exceed the current pool amount (₹${formatMoney(game.pool)}).`,
+            "error"
+        );
+        return;
+    }
+
+
+    // ======================================
     // FIND PLAYER
     // ======================================
 
@@ -668,6 +708,8 @@ function submitResult(result) {
 
         player: player.name,
 
+        playerId: player.id,
+
         bet: betAmount,
 
         result: result,
@@ -683,6 +725,12 @@ function submitResult(result) {
         time: new Date().toLocaleTimeString()
 
     });
+
+
+    // ======================================
+    // SAVE TO LOCAL STORAGE
+    // ======================================
+    saveGame();
 
 
     // ======================================
@@ -762,6 +810,61 @@ function submitResult(result) {
         ).className =
             "status completed";
     }
+}
+
+
+// ==========================================
+// UNDO LAST TRANSACTION FUNCTION
+// ==========================================
+
+function undoLastTransaction() {
+
+    if (!game.started) {
+        showMessage("No active game found.", "error");
+        return;
+    }
+
+    // Find the most recent "BET" entry in history
+    const lastBetIndex = game.history.findIndex(item => item.type === "BET");
+
+    if (lastBetIndex === -1) {
+        showMessage("No recent bets to undo in this round.", "error");
+        return;
+    }
+
+    const lastBet = game.history[lastBetIndex];
+
+    // Ensure the undo belongs to the current active round
+    if (lastBet.round !== game.round) {
+        showMessage("Cannot undo a bet from a completed previous round.", "error");
+        return;
+    }
+
+    // Find the player associated with this bet
+    const player = game.players.find(p => p.id === lastBet.playerId);
+
+    if (!player) {
+        showMessage("Player not found for undo action.", "error");
+        return;
+    }
+
+    // Revert pool and player balance back to poolBefore / balanceBefore
+    game.pool = lastBet.poolBefore;
+    player.balance = lastBet.balanceBefore;
+
+    // Remove this transaction from history
+    game.history.splice(lastBetIndex, 1);
+
+    // Save changes to storage
+    saveGame();
+
+    // Hide last transaction section if it was the displayed one
+    document.getElementById("lastTransactionSection").style.display = "none";
+
+    // Update UI elements
+    updateUI();
+
+    showMessage(`Successfully undone last bet for ${player.name}. Pool restored to ₹${formatMoney(game.pool)}`, "success");
 }
 
 
@@ -883,6 +986,12 @@ function startNewRound() {
 
 
     // ======================================
+    // SAVE TO LOCAL STORAGE
+    // ======================================
+    saveGame();
+
+
+    // ======================================
     // CLEAR CURRENT BET INPUTS ONLY
     // ======================================
 
@@ -915,6 +1024,35 @@ function startNewRound() {
         "success"
 
     );
+}
+
+
+// ==========================================
+// RESET COMPLETE GAME
+// ==========================================
+
+function resetGame() {
+    game = {
+        round: 0,
+        players: [],
+        pool: 0,
+        initialAmount: 0,
+        history: [],
+        started: false
+    };
+
+    // Clear saved storage
+    clearSavedGame();
+
+    document.getElementById("newRoundSection").style.display = "none";
+    document.getElementById("lastTransactionSection").style.display = "none";
+    document.getElementById("initialAmount").value = "";
+    document.getElementById("playerCount").value = "";
+    
+    createPlayerNameInputs();
+    updateUI();
+
+    showMessage("Game has been fully reset.", "success");
 }
 
 
@@ -1000,6 +1138,11 @@ function showLastTransaction(transaction) {
                     </strong>
                 </div>
 
+            </div>
+
+            <!-- UNDO BUTTON FOR RECENT ERROR -->
+            <div style="margin-top: 10px; text-align: right;">
+                <button onclick="undoLastTransaction()" class="btn-undo" style="background: #e74c3c; color: white; border: none; padding: 5px 12px; border-radius: 4px; cursor: pointer;">Undo Last Bet</button>
             </div>
 
         </div>
@@ -1325,7 +1468,7 @@ function updateSettlement() {
 // CLEAR HISTORY
 // ==========================================
 
-function clearHistory() {
+clearHistory = function() {
 
     if (!game.started) {
         return;
@@ -1333,6 +1476,9 @@ function clearHistory() {
 
 
     game.history = [];
+
+    // Save changes
+    saveGame();
 
 
     document.getElementById(
@@ -1412,14 +1558,23 @@ function escapeHTML(value) {
 
 
 // ==========================================
-// CREATE NAME FIELDS WHEN PAGE LOADS
+// LOAD GAME DATA WHEN PAGE LOADS
 // ==========================================
 
 document.addEventListener(
     "DOMContentLoaded",
     () => {
-
-        createPlayerNameInputs();
-
+        loadGame();
+        
+        if (game.started) {
+            updateUI();
+            // If there's a recent bet transaction in history, we can optionally restore the last transaction view if needed
+            const lastBet = game.history.find(item => item.type === "BET");
+            if (lastBet && lastBet.round === game.round) {
+                showLastTransaction(lastBet);
+            }
+        } else {
+            createPlayerNameInputs();
+        }
     }
 );
